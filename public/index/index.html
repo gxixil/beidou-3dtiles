@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Hello World</h1>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // fetchData();
+            convertData();
+        });
+        async function convertData() {
+            const response = await fetch('/api/convert', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    src: './data/output/grid_index_dedup.jsonl', // 本地文件路径（相对于项目根目录）
+                    relationId: '74e3edcc-b6f5-4848-a6ca-6bc212c96454', // 模型唯一标识，用于数据库记录
+                    style: JSON.stringify({
+                        mode: 'face',
+                        color: '#f00',
+                        opacity: 0.5,
+                    }),
+                    maxGridsPerTile: 3, // 每个 B3DM 文件最大网格数
+                    preset: 'line-red', // 内置预设
+                    streaming: true, // 流式处理模式
+                    workers: 4, // Worker 线程数
+                    enableLod: true, // 启用 LOD 层级推导
+                    lodMinLevel: 5, // LOD 最低层级
+                    batchMode: true, // 启用单体化模式
+                }),
+            })
+            console.log(response);
+        }
+
+
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        url: 'http://10.95.16.206:50025/3d/HYK/tileset.json',
+                        modelId: 'HYK',
+                        dthJsonUrl: '',
+                        level: 6,
+                        workerCount: 4,
+                        concurrentTiles: 10
+                    }),
+                });
+                console.log(response);
+                const data = await response.json();
+                console.log(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+    </script>
+</body>
+</html>
